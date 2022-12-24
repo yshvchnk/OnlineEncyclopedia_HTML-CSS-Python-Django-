@@ -1,0 +1,16 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Watchlist</h2>
+    <div display="flex">
+        {% for item in listings %}
+            <div width="200px" height="300px"> 
+                <p>{{ item.title }}</p>
+                <img src="{{ item.img }}" alt="pic" height="200px" width="200px">
+                <p>{{ item.descr }}</p>
+                <p>${{ item.price.bid }}</p>
+                <a href="{% url 'item' id=item.id %}" class="btn btn-danger">Go</a>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

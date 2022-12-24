@@ -1,0 +1,64 @@
+{% extends "auctions/layout.html" %}
+    
+{% block body %}
+    <div>
+        {% if not item.active and user == item.price.user %}
+                Listing is closed. You have won it!
+        {% endif %}
+        {% if user.is_authenticated and item.active %}
+
+            {% if is_owner %}
+                <form action="{% url 'close_item' id=item.id %}" method="POST" margin="10px">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Close</button>
+                </form>
+            {% endif %}
+
+            {% if is_item_watch %}
+                <form action="{% url 'remove_watchlist' id=item.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Remove</button>
+                </form>
+            {% else %}
+                <form action="{% url 'add_watchlist' id=item.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary" margin-top="10px">Add</button>
+                </form>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <h2>Listing page: {{ item.title }}</h2>
+    <img src="{{ item.img }}" alt="{{item.title}}" height="200px">
+    <p>{{ item.descr }}</p>
+    <p>${{ item.price.bid }}</p>
+    <p>User: {{ item.owner }}</p>
+    {% if user.is_authenticated %}
+        <form action="{% url 'make_bid' id=item.id %}" method="POST">
+            {% csrf_token %}
+            <input type="number" min="0" name="bid" placeholder="make a bid" height="300px">
+            <br> <br>
+            <button type="submit" class="btn btn-danger">Bid</button>
+        </form>
+    {% endif %}
+    <p color="red">{{ message }}</p>
+
+    <div>
+        <p>Comments</p>
+        {% if user.is_authenticated %}
+            <form action="{% url 'comment' id=item.id %}" method="POST">
+                {% csrf_token %}
+                <input type="text" name="comment" placeholder="new comment" height="300px">
+                <br> <br>
+                <button type="submit" class="btn btn-danger">Comment</button>
+            </form>
+        {% endif %}
+
+        <br> <br>
+        {% for comment in comment_listing %}
+            <p>{{ comment.comment }}</p>
+        {% endfor %}
+
+    </div>
+
+{% endblock %}
